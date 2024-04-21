@@ -56,7 +56,7 @@ const chatSubmitElement = document.querySelector('#chat_message_submit')
  }
 
 
-function JoinChatRoom(){
+async function JoinChatRoom(){
 
     console.log('Join Chat Room')
     chatName= chatNameElement.value
@@ -68,7 +68,7 @@ function JoinChatRoom(){
     data.append('name',chatName)
     data.append('url',chatWindowurl)
 
-    fetch('/api/create-room/${chatRoomUuid}/',{
+    await fetch('/api/create-room/${chatRoomUuid}/',{
         method: 'POST',
         headers : {
             'X-CSRF Token':getCookie('csrftoken')
@@ -83,6 +83,24 @@ function JoinChatRoom(){
     .then(function(data){
         console.log('data',data)
     }) 
+
+    chatSocket = new WebSocket(`ws://${window.location.host}/ws/${chatRoomUuuid}/`)
+
+    chatSocket.onmessage = function(e)
+    {
+        console.log('onmessage')
+    }
+
+    chatSocket.onopen = function(e)
+    {
+        console.log('onOpen - chat Socket was opened')
+    }
+
+    chatSocket.onclose = function(e)
+    {
+        console.log('onClose - chat Socket was closed')
+    }
+
 
 }
 
