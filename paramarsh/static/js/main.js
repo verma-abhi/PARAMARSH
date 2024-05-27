@@ -55,10 +55,23 @@ const chatSubmitElement = document.querySelector('#chat_message_submit')
    return cookieValue
  }
 
+ function sendMessage()
+ {
+    chatSocket.send(JSON.stringify(
+        {
+           'type': 'message',
+           'message' : chatInputElement.value,
+           'name' : chatName
 
-async function JoinChatRoom(){
+        }))
+        chatInputElement.value = ''
 
-    console.log('Join Chat Room')
+ }
+
+
+async function joinChatRoom(){
+
+    console.log('joinChatRoom')
     chatName= chatNameElement.value
 
     console.log('Join as :',chatName)
@@ -84,7 +97,7 @@ async function JoinChatRoom(){
         console.log('data',data)
     }) 
 
-    chatSocket = new WebSocket(`ws://${window.location.host}/ws/${chatRoomUuuid}/`)
+    chatSocket = new WebSocket(`ws://${window.location.host}/ws/${chatRoomUuid}/`)
 
     chatSocket.onmessage = function(e)
     {
@@ -124,8 +137,16 @@ chatJoinElement.onclick = function(e){
     chatWelcomeElement.classList.add('hidden')
     chatRoomElement.classList.remove('hidden')
 
-    JoinChatRoom()
+    joinChatRoom()
 
     return false
 }
 
+chatSubmitElement.onclick = function(e)
+{
+    e.preventDefault()
+
+    sendMessage()
+
+    return false
+}
