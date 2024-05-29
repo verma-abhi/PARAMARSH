@@ -5,7 +5,7 @@
 
 let chatName = ''
 let chatSocket = null
-let chatWindowurl = window.location.href
+let chatWindowUrl = window.location.href
 let chatRoomUuid = Math.random().toString(36).slice(2,12)
 
 
@@ -42,9 +42,9 @@ const chatSubmitElement = document.querySelector('#chat_message_submit')
 
     for(var i=0;i<cookies.length;i++)
     {
-        var cookie=cookies[i].trim()
+        var cookie = cookies[i].trim()
         
-        if(cookie.substring(0,name.length+1) === (name + '='))
+        if(cookie.substring(0,name.length + 1) === (name + '='))
         {
             cookieValue = decodeURIComponent(cookie.substring(name.length + 1))
 
@@ -57,18 +57,16 @@ const chatSubmitElement = document.querySelector('#chat_message_submit')
 
  function sendMessage()
  {
-    chatSocket.send(JSON.stringify(
-        {
+    chatSocket.send(JSON.stringify({
            'type': 'message',
            'message' : chatInputElement.value,
            'name' : chatName
-
         }))
         chatInputElement.value = ''
 
  }
 
- function onChatMessage()
+ function onChatMessage(data)
  {
    console.log('onChatMessage',data)
 
@@ -104,32 +102,37 @@ const chatSubmitElement = document.querySelector('#chat_message_submit')
         </div>`
     }
     }
-   }
- }
+}
+ 
 
 
 async function joinChatRoom(){
 
     console.log('joinChatRoom')
+
     chatName= chatNameElement.value
 
     console.log('Join as :',chatName)
     console.log('Room uuid:',chatRoomUuid)
 
-    const data=new FormData()
+    const data = new FormData()
     data.append('name',chatName)
-    data.append('url',chatWindowurl)
+    data.append('url',chatWindowUrl)
 
-    await fetch('/api/create-room/${chatRoomUuid}/',{
+
+    await fetch(`/api/create-room/${chatRoomUuid}/`,{
         method: 'POST',
         headers : {
-            'X-CSRF Token':getCookie('csrftoken')
+            'X-CSRFToken':getCookie('csrftoken')
         },
         body : data
     })
 
+
+
     .then(function(res){
         return res.json()
+
     })
 
     .then(function(data){
@@ -138,9 +141,8 @@ async function joinChatRoom(){
 
     chatSocket = new WebSocket(`ws://${window.location.host}/ws/${chatRoomUuid}/`)
 
-    chatSocket.onmessage = function(e)
-    {
-        console.log('onmessage')
+    chatSocket.onmessage = function(e) {
+        console.log('onMessage')
 
         onChatMessage(JSON.parse(e.data))
     }
@@ -148,6 +150,7 @@ async function joinChatRoom(){
     chatSocket.onopen = function(e)
     {
         console.log('onOpen - chat Socket was opened')
+
     }
 
     chatSocket.onclose = function(e)
@@ -183,8 +186,7 @@ chatJoinElement.onclick = function(e){
     return false
 }
 
-chatSubmitElement.onclick = function(e)
-{
+chatSubmitElement.onclick = function(e){
     e.preventDefault() // prevents default process like page reload
 
     sendMessage()
