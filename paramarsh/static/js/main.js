@@ -193,3 +193,9 @@ chatSubmitElement.onclick = function(e){
 
     return false
 }
+
+chatInputElement.onkeyup = function(e) {
+    if (e.keyCode == 13) {             //13 is the integral number for ENTER
+        sendMessage()
+    }
+}
