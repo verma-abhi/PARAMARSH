@@ -120,6 +120,8 @@ chatSocket.onmessage = function(e) {
 
 chatSocket.onopen = function(e) {
     console.log('on open')
+
+    scrollToBottom() 
 }
 
 chatSocket.onclose = function(e) {

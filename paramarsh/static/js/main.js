@@ -32,6 +32,10 @@ const chatSubmitElement = document.querySelector('#chat_message_submit')
  
  */
 
+function scrollToBottom() {
+    chatLogElement.scrollTop = chatLogElement.scrollHeight
+}
+
  function getCookie(name)
  {
    var cookieValue = null
@@ -102,6 +106,9 @@ const chatSubmitElement = document.querySelector('#chat_message_submit')
         </div>`
     }
     }
+
+    scrollToBottom() 
+  
 }
  
 
@@ -150,6 +157,8 @@ async function joinChatRoom(){
     chatSocket.onopen = function(e)
     {
         console.log('onOpen - chat Socket was opened')
+
+        scrollToBottom() 
 
     }
 
