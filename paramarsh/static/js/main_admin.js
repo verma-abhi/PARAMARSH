@@ -1,4 +1,5 @@
 
+
 /**
  * Variables
  */
@@ -20,8 +21,6 @@ const chatSubmitElement = document.querySelector('#chat_message_submit')
 /**
  * Functions
  */
-
-
 
 function scrollToBottom() {
     chatLogElement.scrollTop = chatLogElement.scrollHeight
@@ -105,7 +104,6 @@ function onChatMessage(data) {
 }
 
 
-
 /**
  * Web socket
  */
@@ -121,7 +119,7 @@ chatSocket.onmessage = function(e) {
 chatSocket.onopen = function(e) {
     console.log('on open')
 
-    scrollToBottom() 
+    scrollToBottom()
 }
 
 chatSocket.onclose = function(e) {
@@ -132,7 +130,7 @@ chatSocket.onclose = function(e) {
 /**
  * Event listeners
  */
-  
+
 chatSubmitElement.onclick = function(e) {
     e.preventDefault()
 
@@ -141,11 +139,13 @@ chatSubmitElement.onclick = function(e) {
     return false
 }
 
+
 chatInputElement.onkeyup = function(e) {
-    if (e.keyCode == 13) {             //13 is the integral number for ENTER
+    if (e.keyCode == 13) {
         sendMessage()
     }
 }
+
 
 chatInputElement.onfocus = function(e) {
     chatSocket.send(JSON.stringify({
@@ -155,4 +155,3 @@ chatInputElement.onfocus = function(e) {
         'mentor': document.querySelector('#user_id').textContent.replaceAll('"', ''),
     }))
 }
-
