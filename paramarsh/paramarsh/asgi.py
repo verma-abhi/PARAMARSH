@@ -19,6 +19,9 @@ from chat import routing
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'paramarsh.settings')
 # Initialize Django ASGI application early to ensure the AppRegistry
 # is populated before importing code that may import ORM models.
+
+from chat import routing
+
 django_asgi_application = get_asgi_application()
 
 application = ProtocolTypeRouter(
@@ -28,7 +31,7 @@ application = ProtocolTypeRouter(
 
                  # WebSocket chat handler
         "websocket": AllowedHostsOriginValidator(
-    AuthMiddlewareStack(URLRouter(routing.websocket_urlpatterns) )
-        ),
+            AuthMiddlewareStack(URLRouter(routing.websocket_urlpatterns))
+        )
     }
-    )
+)

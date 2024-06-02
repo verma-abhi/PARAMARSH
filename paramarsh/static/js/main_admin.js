@@ -93,7 +93,7 @@ function onChatMessage(data) {
 
                     <div>
                         <div class="bg-gray-300 p-3 rounded-l-lg rounded-br-lg">
-                            <p class="text-sm">The client is typing...</p>
+                            <p class="text-sm">The student is typing...</p>
                         </div>
                     </div>
                 </div>
@@ -132,7 +132,7 @@ chatSocket.onclose = function(e) {
 /**
  * Event listeners
  */
-
+  
 chatSubmitElement.onclick = function(e) {
     e.preventDefault()
 
@@ -146,3 +146,13 @@ chatInputElement.onkeyup = function(e) {
         sendMessage()
     }
 }
+
+chatInputElement.onfocus = function(e) {
+    chatSocket.send(JSON.stringify({
+        'type': 'update',
+        'message': 'writing_active',
+        'name': document.querySelector('#user_name').textContent.replaceAll('"', ''),
+        'mentor': document.querySelector('#user_id').textContent.replaceAll('"', ''),
+    }))
+}
+

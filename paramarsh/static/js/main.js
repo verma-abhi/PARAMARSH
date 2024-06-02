@@ -65,8 +65,9 @@ function scrollToBottom() {
            'type': 'message',
            'message' : chatInputElement.value,
            'name' : chatName
-        }))
-        chatInputElement.value = ''
+    }))
+
+    chatInputElement.value = ''
 
  }
 
@@ -76,10 +77,17 @@ function scrollToBottom() {
 
    if(data.type == 'chat_message')
    {
+
+    let tmpInfo = document.querySelector('.tmp-info')
+
+    if (tmpInfo) {
+        tmpInfo.remove()
+    }
+
     if(data.mentor)
     {
-        chatLogElement.innerHTML +=
-        `<div class="flex w-full mt-2 space-x-3 max-w-md">
+        chatLogElement.innerHTML +=`
+        <div class="flex w-full mt-2 space-x-3 max-w-md">
           <div class="flex-shrink-0 h-10 w-10 rounded-full bg-gray-300 text-center pt-2">${data.initials}</div>
           <div>
              <div class="rounded-l-lg rounded-br-lg  bg-gray-300 p-3">
@@ -88,12 +96,13 @@ function scrollToBottom() {
              <span class="text-xs text-gray-500 leading-none">${data.created_at} ago</span>
           </div>
 
-        </div>`
+        </div>
+        `
     }
     else
     {
-        chatLogElement.innerHTML +=
-        `<div class="flex w-full mt-2 space-x-3 max-w-md ml-auto justify-end">
+        chatLogElement.innerHTML +=`
+        <div class="flex w-full mt-2 space-x-3 max-w-md ml-auto justify-end">
          
           <div>
              <div class="rounded-l-lg rounded-br-lg  bg-blue-300 p-3">
@@ -103,8 +112,32 @@ function scrollToBottom() {
           </div>
 
           <div class="flex-shrink-0 h-10 w-10 rounded-full bg-gray-300 text-center pt-2">${data.initials}</div>
-        </div>`
+        </div>
+        `
     }
+    }
+    else if (data.type == 'users_update') {
+        chatLogElement.innerHTML += '<p class="mt-2">The mentor has joined the chat!'
+    } else if (data.type == 'writing_active') {
+        if (data.mentor) {
+            let tmpInfo = document.querySelector('.tmp-info')
+
+            if (tmpInfo) {
+                tmpInfo.remove()
+            }
+
+            chatLogElement.innerHTML += `
+                <div class="tmp-info flex w-full mt-2 space-x-3 max-w-md">
+                    <div class="flex-shrink-0 h-10 w-10 rounded-full bg-gray-300 text-center pt-2">${data.initials}</div>
+
+                    <div>
+                        <div class="bg-gray-300 p-3 rounded-l-lg rounded-br-lg">
+                            <p class="text-sm">The mentor is writing a message</p>
+                        </div>
+                    </div>
+                </div>
+            `
+        }
     }
 
     scrollToBottom() 
@@ -134,8 +167,6 @@ async function joinChatRoom(){
         },
         body : data
     })
-
-
 
     .then(function(res){
         return res.json()
@@ -207,4 +238,12 @@ chatInputElement.onkeyup = function(e) {
     if (e.keyCode == 13) {             //13 is the integral number for ENTER
         sendMessage()
     }
+}
+
+chatInputElement.onfocus = function(e) {
+    chatSocket.send(JSON.stringify({
+        'type': 'update',
+        'message': 'writing_active',
+        'name': chatName
+    }))
 }
